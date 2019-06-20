@@ -36,7 +36,7 @@ static async Task Main(string[] args) {
   File.WriteAllText(file, "lorem ipsum");
 
   using (var iisExpress = IISExpress.Http().PhysicalPath(path).Port(8080).Start())
-  using (var http = new HttpClient { BaseAddress = iisExpress.BaseUri }) {
+  using (var http = iisExpress.CreateHttpClient()) {
     var contents = await http.GetStringAsync("/test.txt");
     Console.WriteLine(contents);
   }
