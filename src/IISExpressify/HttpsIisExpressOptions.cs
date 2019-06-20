@@ -10,6 +10,7 @@ namespace IISExpressify
         readonly string _physicalPath;
         readonly ushort _port;
         readonly bool _systray;
+        readonly ApplicationPoolPipelineMode _pipelineMode;
         readonly StartIisExpress _start;
 
         internal HttpsIisExpressOptions(StartIisExpress start)
@@ -18,18 +19,20 @@ namespace IISExpressify
             _port = 0;
             _systray = false;
             _start = start;
+            _pipelineMode = ApplicationPoolPipelineMode.Default;
         }
 
-        HttpsIisExpressOptions(StartIisExpress start, string physicalPath, ushort port, bool systray)
+        HttpsIisExpressOptions(StartIisExpress start, string physicalPath, ushort port, ApplicationPoolPipelineMode pipelineMode, bool systray)
         {
             _physicalPath = physicalPath;
             _port = port;
             _systray = systray;
             _start = start;
+            _pipelineMode = pipelineMode;
         }
 
         public HttpsIisExpressOptions PhysicalPath(string path) =>
-            new HttpsIisExpressOptions(_start, ValidatePath(path), _port, _systray);
+            new HttpsIisExpressOptions(_start, ValidatePath(path), _port, _pipelineMode, _systray);
 
         static string ValidatePath(string path)
         {
@@ -38,7 +41,7 @@ namespace IISExpressify
         }
 
         public HttpsIisExpressOptions Port(ushort port) =>
-            new HttpsIisExpressOptions(_start, _physicalPath, ValidatePort(port), _systray);
+            new HttpsIisExpressOptions(_start, _physicalPath, ValidatePort(port), _pipelineMode, _systray);
 
         static ushort ValidatePort(ushort port)
         {
@@ -48,10 +51,28 @@ namespace IISExpressify
         }
 
         public HttpsIisExpressOptions HideSystray() =>
-            new HttpsIisExpressOptions(_start, _physicalPath, _port, systray: false);
+            new HttpsIisExpressOptions(_start, _physicalPath, _port, _pipelineMode, systray: false);
 
         public HttpsIisExpressOptions ShowSystray() =>
-            new HttpsIisExpressOptions(_start, _physicalPath, _port, systray: true);
+            new HttpsIisExpressOptions(_start, _physicalPath, _port, _pipelineMode, systray: true);
+
+        public HttpsIisExpressOptions SetPipelineClassic20() =>
+            new HttpsIisExpressOptions(_start, _physicalPath, _port, ApplicationPoolPipelineMode.Classic20, _systray);
+
+        public HttpsIisExpressOptions SetPipelineClassic40() =>
+            new HttpsIisExpressOptions(_start, _physicalPath, _port, ApplicationPoolPipelineMode.Classic40, _systray);
+
+        public HttpsIisExpressOptions SetPipelineIntegrated20() =>
+            new HttpsIisExpressOptions(_start, _physicalPath, _port, ApplicationPoolPipelineMode.Integrated20, _systray);
+
+        public HttpsIisExpressOptions SetPipelineIntegrated40() =>
+            new HttpsIisExpressOptions(_start, _physicalPath, _port, ApplicationPoolPipelineMode.Integrated40, _systray);
+
+        public HttpsIisExpressOptions SetPipelineDefault() =>
+            new HttpsIisExpressOptions(_start, _physicalPath, _port, ApplicationPoolPipelineMode.Default, _systray);
+
+        public HttpsIisExpressOptions SetPipelineUnmanaged() =>
+            new HttpsIisExpressOptions(_start, _physicalPath, _port, ApplicationPoolPipelineMode.Unmanaged, _systray);
 
         static string GetTemplateConfig() =>
             Path.Combine(
@@ -103,6 +124,45 @@ namespace IISExpressify
             }
         }
 
+        void ReplaceApplicationPool(XDocument document)
+        {
+            var applicationPoolName = GetPredefinedApplicationPoolName(_pipelineMode);
+
+            var applicationPoolExists = document.Descendants("applicationPools")
+                .Descendants("add")
+                .Select(add => add.Attribute("name").Value)
+                .Contains(applicationPoolName);
+            if (!applicationPoolExists)
+            {
+                var message = $"Application Pool {applicationPoolName} is not available in applicationhost.config";
+                throw new InvalidOperationException(message);
+            }
+
+            var applicationDefaults = document.Descendants("applicationDefaults");
+
+            var root = applicationDefaults.First();
+            root.Attribute("applicationPool").Value = applicationPoolName;
+        }
+
+        static string GetPredefinedApplicationPoolName(ApplicationPoolPipelineMode pipelineMode)
+        {
+            switch (pipelineMode)
+            {
+                case ApplicationPoolPipelineMode.Classic20:
+                    return "Clr2ClassicAppPool";
+                case ApplicationPoolPipelineMode.Classic40:
+                    return "Clr4ClassicAppPool";
+                case ApplicationPoolPipelineMode.Integrated20:
+                    return "Clr2IntegratedAppPool";
+                case ApplicationPoolPipelineMode.Integrated40:
+                    return "Clr4IntegratedAppPool";
+                case ApplicationPoolPipelineMode.Unmanaged:
+                    return "UnmanagedClassicAppPool";
+                default:
+                    return "IISExpressAppPool";
+            }
+        }
+
         string CreateConfigFile()
         {
             string templateFile = GetTemplateConfig();
@@ -116,6 +176,7 @@ namespace IISExpressify
             var document = XDocument.Load(configFile);
             ReplaceBinding(document);
             ReplaceVirtualDirectory(document);
+            ReplaceApplicationPool(document);
             document.Save(configFile);
 
             return configFile;

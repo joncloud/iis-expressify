@@ -4,7 +4,7 @@ using System.IO;
 
 namespace IISExpressify
 {
-    public class IisExpress : IDisposable
+    public class IisExpress : IIisExpress, IDisposable
     {
         public static HttpIisExpressOptions Http() =>
              new HttpIisExpressOptions(Start);
