@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -8,6 +9,13 @@ namespace IISExpressify.Tests
 {
     public class IisExpressTests
     {
+        public IisExpressTests()
+        {
+            // For GitHub Actions workflow.
+            ServicePointManager.SecurityProtocol = 
+                SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+        }
+
         static string GetHostingDirectory() =>
             Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
