@@ -77,9 +77,7 @@ namespace IISExpressify
 
         static string GetTemplateConfig() =>
             Path.Combine(
-                Environment.Is64BitOperatingSystem
-                    ? Environment.GetEnvironmentVariable("PROGRAMFILES(X86)")
-                    : Environment.GetEnvironmentVariable("PROGRAMFILES"),
+                Environment.GetEnvironmentVariable("PROGRAMFILES"),
                 "IIS Express",
                 "AppServer",
                 "applicationhost.config"

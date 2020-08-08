@@ -7,7 +7,7 @@ on:
     branches: [ publish ]
 
 env:
-  shouldPublish: ${{ contains(github.ref, 'refs/heads/publish') }}
+  iisExpressifyTestIgnoreHttps: true
 
 jobs:
   build:
@@ -36,4 +36,4 @@ jobs:
 
     - name: Pack
       run: dotnet pack --configuration Release --no-restore --no-build ./src/IISExpressify/IISExpressify.csproj
-      if: ${{ env.shouldPublish }}
+      if: ${{ contains(github.ref, 'refs/heads/publish') }}

@@ -17,9 +17,7 @@ namespace IISExpressify
 
         static string GetProcessFileName() =>
             Path.Combine(
-                Environment.Is64BitOperatingSystem
-                    ? Environment.GetEnvironmentVariable("PROGRAMFILES(X86)")
-                    : Environment.GetEnvironmentVariable("PROGRAMFILES"),
+                Environment.GetEnvironmentVariable("PROGRAMFILES"),
                 "IIS Express",
                 "iisexpress.exe"
             );
