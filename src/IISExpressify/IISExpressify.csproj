@@ -16,7 +16,7 @@
     <PackageId>IISExpressify</PackageId>
     <PackageTags>integration test;test;asp.net;web forms;wcf;iis;iis express;</PackageTags>
     <PackageReleaseNotes>https://github.com/joncloud/iis-expressify/releases</PackageReleaseNotes>
-    <PackageIconUrl>https://raw.githubusercontent.com/joncloud/iis-expressify/master/nuget.png</PackageIconUrl>
+    <!--<PackageIconUrl>https://raw.githubusercontent.com/joncloud/iis-expressify/master/nuget.png</PackageIconUrl>-->
     <PackageProjectUrl>https://github.com/joncloud/iis-expressify</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
