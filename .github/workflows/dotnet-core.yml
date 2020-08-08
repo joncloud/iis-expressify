@@ -28,6 +28,9 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
 
+    - name: Import Certificate
+      run: powershell .\ImportIISExpressCertificate.ps1
+
     - name: Test
       run: dotnet test --configuration Release --no-restore --no-build --verbosity normal
 
