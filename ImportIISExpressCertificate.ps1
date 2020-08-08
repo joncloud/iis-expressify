@@ -16,7 +16,15 @@ else
     foreach ($cert in $certs)
     {
         Export-Certificate -Cert $cert.PSPath -FilePath $cerFile -Type CERT | Out-Null
-        Import-Certificate -FilePath $cerFile -CertStoreLocation Cert:\CurrentUser\Root -Confirm | Out-Null
+        $cerFile = Resolve-Path $cerFile
+
+        # https://social.technet.microsoft.com/Forums/ie/en-US/aac8cfcd-6bd2-423f-895b-a6612459eb16/importcertificate-without-confirmation-ignore-security-warnings?forum=winserverpowershell
+        $cert2 = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($cerFile)
+        $rootStore = Get-Item cert:\LocalMachine\Root
+        $rootStore.Open("ReadWrite")
+        $rootStore.Add($cert2)
+        $rootStore.Close()
+
         Remove-Item $cerFile -Force
     }
     Write-Host 'Successfully installed the certificate to
