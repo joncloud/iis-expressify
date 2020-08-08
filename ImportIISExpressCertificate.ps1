@@ -1,3 +1,4 @@
+# https://docs.microsoft.com/en-us/troubleshoot/visualstudio/general/warnings-untrusted-certificate
 ipmo PKI
 $name = [GUID]::NewGuid()
 $cerFile = "$env:TEMP\$name.cer"
@@ -15,7 +16,7 @@ else
     foreach ($cert in $certs)
     {
         Export-Certificate -Cert $cert.PSPath -FilePath $cerFile -Type CERT | Out-Null
-        Import-Certificate -FilePath $cerFile -CertStoreLocation Cert:\CurrentUser\Root | Out-Null
+        Import-Certificate -FilePath $cerFile -CertStoreLocation Cert:\CurrentUser\Root -Confirm | Out-Null
         Remove-Item $cerFile -Force
     }
     Write-Host 'Successfully installed the certificate to
