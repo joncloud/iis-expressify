@@ -37,3 +37,10 @@ jobs:
     - name: Pack
       run: dotnet pack --configuration Release --no-restore --no-build ./src/IISExpressify/IISExpressify.csproj
       if: ${{ contains(github.ref, 'refs/heads/publish') }}
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      if: ${{ contains(github.ref, 'refs/heads/publish') }}
+      with:
+        name: IISExpressify
+        path: src/IISExpressify/bin/Release
