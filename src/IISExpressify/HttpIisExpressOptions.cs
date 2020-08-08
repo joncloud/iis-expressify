@@ -32,6 +32,7 @@ namespace IISExpressify
         static string ValidatePath(string path)
         {
             if (!Directory.Exists(path)) throw new DirectoryNotFoundException(path);
+            if (path.EndsWith("\\")) path = path.TrimEnd('\\');
             return path;
         }
 
