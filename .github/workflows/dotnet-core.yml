@@ -7,7 +7,7 @@ on:
     branches: [ publish ]
 
 env:
-  shouldPublish: ${{ contains(github.ref, 'refs/heads/publish' }}
+  shouldPublish: ${{ contains(github.ref, 'refs/heads/publish') }}
 
 jobs:
   build:
