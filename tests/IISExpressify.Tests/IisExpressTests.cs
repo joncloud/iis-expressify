@@ -11,7 +11,7 @@ namespace IISExpressify.Tests
     {
         public IisExpressTests()
         {
-            // For GitHub Actions workflow.
+            // For GitHub Actions workflow
             ServicePointManager.SecurityProtocol = 
                 SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
         }
