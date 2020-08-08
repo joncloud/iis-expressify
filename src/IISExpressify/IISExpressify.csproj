@@ -18,7 +18,7 @@
     <PackageReleaseNotes>https://github.com/joncloud/iis-expressify/releases</PackageReleaseNotes>
     <PackageIconUrl>https://raw.githubusercontent.com/joncloud/iis-expressify/master/nuget.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/joncloud/iis-expressify</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/joncloud/iis-expressify/master/LICENSE.md</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/joncloud/iis-expressify</RepositoryUrl>
   </PropertyGroup>
